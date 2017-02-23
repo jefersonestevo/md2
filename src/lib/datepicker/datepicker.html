@@ -12,7 +12,7 @@
   </div>
   <div class="md2-datepicker-input">
     <span class="md2-datepicker-placeholder" [class.has-value]="date"> {{ placeholder }} </span>
-    <span class="md2-datepicker-input-text">{{_viewValue}}</span>
+    <input #inputView [value]="_viewValue" [required]="required" [disabled]="disabled" tabindex="-1" class="md2-datepicker-input-text" />
     <svg width="24" height="24" viewBox="0 0 24 24">
       <path d="M7 10l5 5 5-5z" />
     </svg>
@@ -77,19 +77,19 @@
           <table class="md2-calendar-dates">
             <thead><tr><th *ngFor="let day of _weekDays">{{day.xshort}}</th></tr></thead>
             <tbody>
-              <tr *ngFor="let w of _dates">
-                <td *ngFor="let d of w">
-                  <div class="md2-calendar-day"
-                       [class.today]="d.today"
-                       [class.focus]="_dateUtil.isSameDay(displayDate, d.date)"
-                       [class.selected]="_dateUtil.isSameDay(selected, d.date)"
-                       [class.disabled]="d.disabled"
-                       [class.prev-month]="d.calMonth===_prevMonth"
-                       [class.curr-month]="d.calMonth===_currMonth"
-                       [class.next-month]="d.calMonth===_nextMonth"
-                       (click)="_onClickDate($event,d)">{{d.dateObj.day}}</div>
-                </td>
-              </tr>
+            <tr *ngFor="let w of _dates">
+              <td *ngFor="let d of w">
+                <div class="md2-calendar-day"
+                     [class.today]="d.today"
+                     [class.focus]="_dateUtil.isSameDay(displayDate, d.date)"
+                     [class.selected]="_dateUtil.isSameDay(selected, d.date)"
+                     [class.disabled]="d.disabled"
+                     [class.prev-month]="d.calMonth===_prevMonth"
+                     [class.curr-month]="d.calMonth===_currMonth"
+                     [class.next-month]="d.calMonth===_nextMonth"
+                     (click)="_onClickDate($event,d)">{{d.dateObj.day}}</div>
+              </td>
+            </tr>
             </tbody>
           </table>
         </div>

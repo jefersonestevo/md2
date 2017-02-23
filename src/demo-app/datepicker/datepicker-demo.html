@@ -57,4 +57,21 @@
                     (change)="handleChange($event)">
     </md2-datepicker>
   </div>
+  <h4>Form Submit</h4>
+  <div>
+    <form (ngSubmit)="onSubmit()"  #myForm="ngForm">
+      <md2-datepicker [(ngModel)]="formDate"
+                      name="currentDate"
+                      type="date"
+                      placeholder="Date"
+                      format="DD/MM/YYYY"
+                      [required]="formRequired"
+                      (change)="handleChange($event)">
+      </md2-datepicker>
+      <br />
+      <label><input type="checkbox" [(ngModel)]="formRequired" name="formRequired"/>Required</label>
+      <button type="button" (click)="formDate = null">Clear Value</button>
+      <button>Submit Form</button>
+    </form>
+  </div>
 </div>

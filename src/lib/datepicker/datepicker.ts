@@ -10,6 +10,7 @@ import {
   EventEmitter,
   Renderer,
   Self,
+  ViewChild,
   ViewChildren,
   QueryList,
   ViewEncapsulation,
@@ -120,6 +121,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   _transformOrigin: string = 'top';
   _panelDoneAnimating: boolean = false;
 
+  @ViewChild('inputView') _inputView: ElementRef;
   @ViewChildren(TemplatePortalDirective) templatePortals: QueryList<Portal<any>>;
 
   /** Event emitted when the select has been opened. */
@@ -132,8 +134,8 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   @Output() change: EventEmitter<Md2DateChange> = new EventEmitter<Md2DateChange>();
 
   constructor(private _element: ElementRef, private overlay: Overlay, private _renderer: Renderer,
-    private _dateUtil: Md2DateUtil, private _locale: DateLocale,
-    @Self() @Optional() public _control: NgControl) {
+              private _dateUtil: Md2DateUtil, private _locale: DateLocale,
+              @Self() @Optional() public _control: NgControl) {
     if (this._control) {
       this._control.valueAccessor = this;
     }
@@ -149,6 +151,8 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   ngAfterContentInit() {
     this._isInitialized = true;
     this._isCalendarVisible = this.type !== 'time' ? true : false;
+    this._renderer.listen(this._inputView.nativeElement, 'keypress',
+        (event: any) => event.preventDefault());
   }
 
   ngOnDestroy() { this.destroyPanel(); }
@@ -261,7 +265,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   }
 
   private _format: string = this.type === 'date' ?
-    'DD/MM/YYYY' : this.type === 'time' ? 'HH:mm' : this.type === 'datetime' ?
+      'DD/MM/YYYY' : this.type === 'time' ? 'HH:mm' : this.type === 'datetime' ?
       'DD/MM/YYYY HH:mm' : 'DD/MM/YYYY';
   private _required: boolean = false;
   private _disabled: boolean = false;
@@ -518,7 +522,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
 
   private getYears() {
     let startYear = this._min ? this._min.getFullYear() : 1900,
-      endYear = this._max ? this._max.getFullYear() : this.today.getFullYear() + 100;
+        endYear = this._max ? this._max.getFullYear() : this.today.getFullYear() + 100;
     this._years = [];
     for (let i = startYear; i <= endYear; i++) {
       this._years.push(i);
@@ -528,7 +532,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   private _scrollToSelectedYear() {
     setTimeout(() => {
       let yearContainer = this._element.nativeElement.querySelector('.md2-calendar-years'),
-        selectedYear = this._element.nativeElement.querySelector('.md2-calendar-year.selected');
+          selectedYear = this._element.nativeElement.querySelector('.md2-calendar-year.selected');
       yearContainer.scrollTop = (selectedYear.offsetTop + 20) - yearContainer.clientHeight / 2;
     }, 0);
   }
@@ -540,7 +544,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   _setYear(year: number) {
     let date = this.displayDate;
     this.displayDate = new Date(year, date.getMonth(), date.getDate(),
-      date.getHours(), date.getMinutes());
+        date.getHours(), date.getMinutes());
     this.generateCalendar();
     this._isYearsVisible = false;
   }
@@ -610,7 +614,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
       this._updateMonth(-1);
     } else if (date.calMonth === this._currMonth) {
       this.setDate(new Date(date.dateObj.year, date.dateObj.month,
-        date.dateObj.day, this.displayDate.getHours(), this.displayDate.getMinutes()));
+          date.dateObj.day, this.displayDate.getHours(), this.displayDate.getMinutes()));
     } else if (date.calMonth === this._nextMonth) {
       this._updateMonth(1);
     }
@@ -650,7 +654,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
    */
   _isBeforeMonth() {
     return !this._min ? true :
-      this._min && this._dateUtil.getMonthDistance(this.displayDate, this._min) < 0;
+    this._min && this._dateUtil.getMonthDistance(this.displayDate, this._min) < 0;
   }
 
   /**
@@ -659,7 +663,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
    */
   _isAfterMonth() {
     return !this._max ? true :
-      this._max && this._dateUtil.getMonthDistance(this.displayDate, this._max) > 0;
+    this._max && this._dateUtil.getMonthDistance(this.displayDate, this._max) > 0;
   }
 
   /**
@@ -699,7 +703,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     let firstDayOfMonth = this._dateUtil.getFirstDateOfMonth(this.displayDate);
     let numberOfDaysInMonth = this._dateUtil.getNumberOfDaysInMonth(this.displayDate);
     let numberOfDaysInPrevMonth = this._dateUtil.getNumberOfDaysInMonth(
-      this._dateUtil.incrementMonths(this.displayDate, -1));
+        this._dateUtil.incrementMonths(this.displayDate, -1));
 
     let dayNbr = 1;
     let calMonth = this._prevMonth;
@@ -789,7 +793,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     let date = this.displayDate;
     this._isHoursVisible = false;
     this.displayDate = new Date(date.getFullYear(), date.getMonth(),
-      date.getDate(), hour, date.getMinutes());
+        date.getDate(), hour, date.getMinutes());
     this._resetClock();
   }
 
@@ -800,7 +804,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
   private setMinute(minute: number) {
     let date = this.displayDate;
     this.displayDate = new Date(date.getFullYear(), date.getMonth(),
-      date.getDate(), date.getHours(), minute);
+        date.getDate(), date.getHours(), minute);
     this.selected = this.displayDate;
     this.date = this.displayDate;
     this._emitChangeEvent();
@@ -829,34 +833,34 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     // document.addEventListener('mouseup', this.onMouseUpClock);
 
     /*
-    var offset = plate.offset(),
-				isTouch = /^touch/.test(e.type),
-				x0 = offset.left + dialRadius,
-				y0 = offset.top + dialRadius,
-				dx = (isTouch ? e.originalEvent.touches[0] : e).pageX - x0,
-				dy = (isTouch ? e.originalEvent.touches[0] : e).pageY - y0,
-				z = Math.sqrt(dx * dx + dy * dy),
-				moved = false;
+     var offset = plate.offset(),
+     isTouch = /^touch/.test(e.type),
+     x0 = offset.left + dialRadius,
+     y0 = offset.top + dialRadius,
+     dx = (isTouch ? e.originalEvent.touches[0] : e).pageX - x0,
+     dy = (isTouch ? e.originalEvent.touches[0] : e).pageY - y0,
+     z = Math.sqrt(dx * dx + dy * dy),
+     moved = false;
 
-			// When clicking on minutes view space, check the mouse position
-			if (space && (z < outerRadius - tickRadius || z > outerRadius + tickRadius)) {
-				return;
-			}
-			e.preventDefault();
+     // When clicking on minutes view space, check the mouse position
+     if (space && (z < outerRadius - tickRadius || z > outerRadius + tickRadius)) {
+     return;
+     }
+     e.preventDefault();
 
-			// Set cursor style of body after 200ms
-			var movingTimer = setTimeout(function(){
-				$body.addClass('clockpicker-moving');
-			}, 200);
+     // Set cursor style of body after 200ms
+     var movingTimer = setTimeout(function(){
+     $body.addClass('clockpicker-moving');
+     }, 200);
 
-			// Place the canvas to top
-			if (svgSupported) {
-				plate.append(self.canvas);
-			}
+     // Place the canvas to top
+     if (svgSupported) {
+     plate.append(self.canvas);
+     }
 
-			// Clock
-			self.setHand(dx, dy, ! space, true);
-    */
+     // Clock
+     self.setHand(dx, dy, ! space, true);
+     */
   }
 
   _handleMousemove(event: MouseEvent) {
@@ -873,17 +877,17 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     //   // }
 
     /*
-    e.preventDefault();
-				var isTouch = /^touch/.test(e.type),
-					x = (isTouch ? e.originalEvent.touches[0] : e).pageX - x0,
-					y = (isTouch ? e.originalEvent.touches[0] : e).pageY - y0;
-				if (! moved && x === dx && y === dy) {
-					// Clicking in chrome on windows will trigger a mousemove event
-					return;
-				}
-				moved = true;
-				self.setHand(x, y, false, true);
-    */
+     e.preventDefault();
+     var isTouch = /^touch/.test(e.type),
+     x = (isTouch ? e.originalEvent.touches[0] : e).pageX - x0,
+     y = (isTouch ? e.originalEvent.touches[0] : e).pageY - y0;
+     if (! moved && x === dx && y === dy) {
+     // Clicking in chrome on windows will trigger a mousemove event
+     return;
+     }
+     moved = true;
+     self.setHand(x, y, false, true);
+     */
   }
 
   _handleMouseup(event: MouseEvent) {
@@ -932,34 +936,34 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
 
 
     /*
-    $doc.off(mouseupEvent);
-				e.preventDefault();
-				var isTouch = /^touch/.test(e.type),
-					x = (isTouch ? e.originalEvent.changedTouches[0] : e).pageX - x0,
-					y = (isTouch ? e.originalEvent.changedTouches[0] : e).pageY - y0;
-				if ((space || moved) && x === dx && y === dy) {
-					self.setHand(x, y);
-				}
-				if (self.currentView === 'hours') {
-					self.toggleView('minutes', duration / 2);
-				} else {
-					if (options.autoclose) {
-						self.minutesView.addClass('clockpicker-dial-out');
-						setTimeout(function(){
-							self.done();
-						}, duration / 2);
-					}
-				}
-				plate.prepend(canvas);
+     $doc.off(mouseupEvent);
+     e.preventDefault();
+     var isTouch = /^touch/.test(e.type),
+     x = (isTouch ? e.originalEvent.changedTouches[0] : e).pageX - x0,
+     y = (isTouch ? e.originalEvent.changedTouches[0] : e).pageY - y0;
+     if ((space || moved) && x === dx && y === dy) {
+     self.setHand(x, y);
+     }
+     if (self.currentView === 'hours') {
+     self.toggleView('minutes', duration / 2);
+     } else {
+     if (options.autoclose) {
+     self.minutesView.addClass('clockpicker-dial-out');
+     setTimeout(function(){
+     self.done();
+     }, duration / 2);
+     }
+     }
+     plate.prepend(canvas);
 
-				// Reset cursor style of body
-				clearTimeout(movingTimer);
-				$body.removeClass('clockpicker-moving');
+     // Reset cursor style of body
+     clearTimeout(movingTimer);
+     $body.removeClass('clockpicker-moving');
 
-				// Unbind mousemove event
-				$doc.off(mousemoveEvent);
+     // Unbind mousemove event
+     $doc.off(mousemoveEvent);
 
-    */
+     */
   }
 
   /**
@@ -970,12 +974,12 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     let minute = this.displayDate.getMinutes();
 
     let value = this._isHoursVisible ? hour : minute,
-      unit = Math.PI / (this._isHoursVisible ? 6 : 30),
-      radian = value * unit,
-      radius = this._isHoursVisible && value > 0 && value < 13 ?
-        this._clock.innerRadius : this._clock.outerRadius,
-      x = Math.sin(radian) * radius,
-      y = - Math.cos(radian) * radius;
+        unit = Math.PI / (this._isHoursVisible ? 6 : 30),
+        radian = value * unit,
+        radius = this._isHoursVisible && value > 0 && value < 13 ?
+            this._clock.innerRadius : this._clock.outerRadius,
+        x = Math.sin(radian) * radius,
+        y = - Math.cos(radian) * radius;
     this._setClockHand(x, y);
   }
 
@@ -986,11 +990,11 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
    */
   private _setClockHand(x: number, y: number) {
     let radian = Math.atan2(x, y),
-      unit = Math.PI / (this._isHoursVisible ? 6 : 30),
-      z = Math.sqrt(x * x + y * y),
-      inner = this._isHoursVisible && z < (this._clock.outerRadius + this._clock.innerRadius) / 2,
-      radius = inner ? this._clock.innerRadius : this._clock.outerRadius,
-      value = 0;
+        unit = Math.PI / (this._isHoursVisible ? 6 : 30),
+        z = Math.sqrt(x * x + y * y),
+        inner = this._isHoursVisible && z < (this._clock.outerRadius + this._clock.innerRadius) / 2,
+        radius = inner ? this._clock.innerRadius : this._clock.outerRadius,
+        value = 0;
 
     if (radian < 0) { radian = Math.PI * 2 + radian; }
     value = Math.round(radian / unit);
@@ -1017,7 +1021,7 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     for (let i = 0; i < 24; i++) {
       let radian = i / 6 * Math.PI;
       let inner = i > 0 && i < 13,
-        radius = inner ? this._clock.innerRadius : this._clock.outerRadius;
+          radius = inner ? this._clock.innerRadius : this._clock.outerRadius;
       this._hours.push({
         hour: i === 0 ? '00' : i,
         top: this._clock.dialRadius - Math.cos(radian) * radius - this._clock.tickRadius,
@@ -1044,12 +1048,12 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
    */
   private _formatDate(date: Date): string {
     return this.format
-      .replace('YYYY', date.getFullYear() + '')
-      .replace('MM', this._prependZero((date.getMonth() + 1) + ''))
-      .replace('DD', this._prependZero(date.getDate() + ''))
-      .replace('HH', this._prependZero(date.getHours() + ''))
-      .replace('mm', this._prependZero(date.getMinutes() + ''))
-      .replace('ss', this._prependZero(date.getSeconds() + ''));
+        .replace('YYYY', date.getFullYear() + '')
+        .replace('MM', this._prependZero((date.getMonth() + 1) + ''))
+        .replace('DD', this._prependZero(date.getDate() + ''))
+        .replace('HH', this._prependZero(date.getHours() + ''))
+        .replace('mm', this._prependZero(date.getMinutes() + ''))
+        .replace('ss', this._prependZero(date.getSeconds() + ''));
   }
 
   /**
@@ -1124,9 +1128,9 @@ export class Md2Datepicker implements AfterContentInit, OnDestroy, ControlValueA
     if (!this._overlayRef) {
       let config = new OverlayState();
       config.positionStrategy = this.overlay.position()
-        .global()
-        .centerHorizontally()
-        .centerVertically();
+          .global()
+          .centerHorizontally()
+          .centerVertically();
       config.hasBackdrop = true;
       config.backdropClass = 'cdk-overlay-dark-backdrop';
 
