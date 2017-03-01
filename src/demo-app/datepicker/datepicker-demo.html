@@ -32,19 +32,19 @@
   </div>
   <h4>Form Submit</h4>
   <div>
-    <form (ngSubmit)="onSubmit()"  #myForm="ngForm">
+    <form (ngSubmit)="onSubmit()">
       <md2-datepicker [(ngModel)]="formDate"
                       name="currentDate"
                       type="date"
                       placeholder="Date"
-                      format="DD/MM/YYYY"
-                      [required]="formRequired"
-                      (change)="handleChange($event)">
+                      format="dd/MM/yyyy"
+                      [required]="formRequired">
       </md2-datepicker>
-      <br />
-      <label><input type="checkbox" [(ngModel)]="formRequired" name="formRequired"/>Required</label>
-      <button type="button" (click)="formDate = null">Clear Value</button>
-      <button>Submit Form</button>
+      <p>
+        <label><input type="checkbox" [(ngModel)]="formRequired" name="formRequired"/>Required</label>
+      </p>
+      <button type="button" button="primary" (click)="formDate = null">Clear Value</button>
+      <button button="primary" >Submit Form</button>
     </form>
   </div>
 </div>
